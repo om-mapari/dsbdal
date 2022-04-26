@@ -1,0 +1,96 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+Air = pd.read_csv(r'D:\Assignment TE-10\DSBDAL\AirQualityUCI.csv', sep = ';')
+Air
+
+Heart = pd.read_csv(r'D:\Assignment TE-10\DSBDAL\Heart.csv', sep = ',')
+Heart
+
+1. Data Cleaning
+
+# Checking for null values in our dataset
+Air.isnull().sum()
+
+# Removing columns containing only null values
+Air.drop(['Unnamed: 15', 'Unnamed: 16'], axis=1, inplace=True)
+
+# Removing rows containing only null values
+Air1 = Air.loc[ 0:9356, :]
+Air1
+
+# Here we can see that our data now has no null values
+Air1.isnull().sum()
+
+# Checking if null values are present in our dataset
+Heart.isnull().sum()
+
+Heart['Ca'].fillna(value = Heart['Ca'].mean(), inplace = True)
+Heart['Thal'].fillna(value = Heart['Thal'].ffill(), inplace = True)
+
+# Here we can see that we have removed all null entries
+Heart.isnull().sum()
+
+Heart1 = Heart1.dropna()
+
+Heart1.shape
+
+2. Error Correction
+
+# Checking for outliers in Air dataset
+plt.figure(figsize = (15,15))
+Air1.boxplot()
+
+# Checking outliers for Heart dataset
+plt.figure(figsize = (15,15))
+Heart.boxplot()
+
+//Maybe not here but whatever
+Heart1 = Heart1.dropna() 
+
+Heart1.shape
+
+3. Data Transformation
+
+Heart1 = pd.read_csv(r'D:\Assignment TE-10\DSBDAL\Heart.csv', sep = ',')
+
+Heart1.loc[Heart1["ChestPain"] == "asymptomatic", "ChestPain"] = 0
+Heart1.loc[Heart1["ChestPain"] == "nontypical", "ChestPain"] = 1
+Heart1.loc[Heart1["ChestPain"] == "nonanginal", "ChestPain"] = 2
+Heart1.loc[Heart1["ChestPain"] == "typical", "ChestPain"] = 3
+
+Heart1.loc[Heart1["Thal"] == "normal", "Thal"] = 1
+Heart1.loc[Heart1["Thal"] == "fixed", "Thal"] = 2
+Heart1.loc[Heart1["Thal"] == "reversable", "Thal"] = 3
+
+Heart1.loc[Heart1["AHD"] == "No", "AHD"] = 0
+Heart1.loc[Heart1["AHD"] == "Yes", "AHD"] = 1
+
+Heart
+
+Heart1
+
+4. Data Model Building
+
+pip install scikit-learn
+
+from sklearn.model_selection import train_test_split
+
+predictors = Heart1.drop("AHD",axis=1)
+target = Heart1["AHD"]
+
+X_train,X_test,Y_train,Y_test = train_test_split(predictors,target,test_size=0.20,random_state=0)
+
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+lr.fit(X_train,Y_train)
+Y_pred_lr = lr.predict(X_test)
+
+Y_pred_lr.shape
+
+score_lr = round(accuracy_score(Y_pred_lr,Y_test)*100,2)
+print("The accuracy score achieved using Logistic Regression is: "+str(score_lr)+" %")
+

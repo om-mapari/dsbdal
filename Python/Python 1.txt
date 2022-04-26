@@ -1,0 +1,79 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("D:\Assignment TE-10\DSBDAL\dataset_Facebook.csv", sep=";")
+
+df
+
+print("Shape : ", df.shape)
+
+df.head()
+
+df.info()
+
+print("Columns : ")
+for i in list(df.columns):
+  print(i)
+
+for i in df.columns:
+  print(i , " : " ,(df[i].isnull().sum() / df.shape[0])*100)
+
+df.isnull().sum()
+
+df.describe(include=['O']).T
+
+df['Type'].value_counts()
+
+---------------------------------------------------------------------------------
+
+1. Creating data subsets based on "Type"
+ 
+i) Photo
+df_photo = df[df['Type']=="Photo"]
+df_photo.shape
+
+df_photo.info()
+
+df_photo.describe().T
+
+ii) Status
+df_status = df[df['Type']=="Status"]
+print("Status : ",df_status.shape)
+
+ii) Link
+df_link= df[df['Type']=="Link"]
+print("Link : ",df_link.shape).
+
+iv) Video
+df_video = df[df['Type']=="Video"]
+print("Video : ",df_video.shape)
+
+---------------------------------------------------------------------------------
+
+2. Merge any 2 subsets
+
+status_link_dataframe = pd.concat([df_status, df_link])
+status_link_dataframe.shape
+
+---------------------------------------------------------------------------------
+
+3. Sort
+
+df.sort_values(['Page total likes','Lifetime Post Total Reach'], ascending=[1,0])
+
+---------------------------------------------------------------------------------
+
+4. Transpose
+
+df.transpose()
+
+---------------------------------------------------------------------------------
+
+5. Melting
+
+df_reshape2 = pd.melt(df_photo,id_vars=["Type"],value_vars=['Post Month'])
+df_reshape2
+
+df_reshape2.shape

@@ -1,0 +1,67 @@
+--------------6---------------------------
+Create Hbase Table:
+create 'Flight', 'flight information', 'schedule', 'delay'
+create '<table_name>','<column_families_name>'...
+
+Drop Hbase Table:
+disable 'Flight'
+drop 'Flight'
+
+To alter table. (Delete Column):
+alter 'Flight','delete'=>'flight information'
+alter <table_name>, "<property>=>"column"
+
+To Put data:
+put 'Flight','1','flight information:data', "ABC Airways"
+put 'Flight','1','schedule:data', "10:00AM"
+put 'Flight','1','delay:data', 30
+
+
+Create External Table in hive from hbase table:
+
+CREATE EXTERNAL TABLE IF NOT EXISTS hive_flight_table(id INT, flight_information STRING, delay INT, schedule STRING) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' 
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,flight information:data,delay:data,schedule:data") 
+TBLPROPERTIES("hbase.table.name" = "Flight");
+
+Total Delay	:
+select SUM(delay) FROM hive_flight_table;
+
+Average Delay:
+select SUM(delay)/COUNT(*) FROM hive_flight_table;
+
+Create Index:
+CREATE INDEX flight_information_index ON TABLE hive_flight_table(flight_information)
+AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler'
+WITH DEFERRED REBUILD ; 
+
+--------------------------7--------------------------------------
+Create Table
+CREATE TABLE customer_info (
+    cust_id int,
+    cust_name varchar(255),
+    order_id int
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+CREATE TABLE order_info (
+    quantity int,
+    item_id int,
+    order_id int
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+CREATE TABLE item_info (
+    item_id int,
+    item_name varchar(255),
+    item_price int
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+Load Data from Local Files
+LOAD DATA LOCAL INPATH '/home/cloudera/Documents/data/order_data.csv' INTO TABLE order_info;
+LOAD DATA LOCAL INPATH '/home/cloudera/Documents/data/customer_data.csv' INTO TABLE customer_info;
+LOAD DATA LOCAL INPATH '/home/cloudera/Documents/data/item_data.csv' INTO TABLE item_info;
+
+Perform Join of 2 tables:
+Select * FROM customer_info INNER JOIN order_info ON customer_info.order_id=order_info.order_id;
